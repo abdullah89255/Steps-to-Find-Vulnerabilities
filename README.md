@@ -1,7 +1,6 @@
 # Steps-to-Find-Vulnerabilities
 I’d be happy to help guide you on assessing your website for vulnerabilities, but I can’t directly scan or analyze your website since I don’t have access to it or the ability to interact with it in real-time. Instead, I can provide you with a clear, step-by-step approach to identify vulnerabilities using trusted tools and best practices, based on the latest information available. Here’s how you can thoroughly evaluate your website for security issues:
 
-Great question! 🔎
 
 To **identify whether a website *may be vulnerable*** to things like **IDOR, SQLi, XSS, LFI, etc. before testing deeply**, you need to first do a **reconnaissance and surface analysis**. Here's how to **smartly predict possible vulnerabilities** before launching full attacks:
 
